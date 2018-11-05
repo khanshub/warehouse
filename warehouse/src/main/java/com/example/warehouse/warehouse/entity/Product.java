@@ -7,22 +7,20 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.aspectj.weaver.patterns.ConcreteCflowPointcut.Slot;
-
 @Entity
 @Table(name = "productdetaildstb")
 public class Product {
-	
+
 	@Id
-    @Column(name = "productcode")
-    private Long productCode;
- 	
-    @Column(name = "productcolor")
-    private String productColor;
-    
-    @OneToOne
-    @JoinColumn(name="slotno")
-    private Rack rack;
+	@Column(name = "productcode")
+	private Long productCode;
+
+	@Column(name = "productcolor")
+	private String productColor;
+
+	@OneToOne
+	@JoinColumn(name = "slotno")
+	private Rack rack;
 
 	public Long getProductCode() {
 		return productCode;
@@ -47,7 +45,5 @@ public class Product {
 	public void setRack(Rack rack) {
 		this.rack = rack;
 	}
-
-
 
 }

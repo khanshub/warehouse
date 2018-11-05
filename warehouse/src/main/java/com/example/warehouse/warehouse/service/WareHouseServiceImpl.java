@@ -1,7 +1,5 @@
 package com.example.warehouse.warehouse.service;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,21 +14,21 @@ import com.example.warehouse.warehouse.repository.ProductRepository;
 import com.example.warehouse.warehouse.repository.RackRepository;
 
 @Service
-public class WareHouseServiceImpl implements WareHouseService{
+public class WareHouseServiceImpl implements WareHouseService {
 
 	@Autowired
 	private ProductRepository productRepository;
-	
+
 	@Autowired
 	private RackRepository rackRepository;
 
 	@Override
 	@Transactional
 	public Integer createWareHouse(Integer wareHouseCapacity) {
-		Integer createdSlotCount=0;
-		List<Rack> resultedlist=rackRepository.createWareHouse(wareHouseCapacity);
-		if(null!=resultedlist){
-			createdSlotCount=resultedlist.size();
+		Integer createdSlotCount = 0;
+		List<Rack> resultedlist = rackRepository.createWareHouse(wareHouseCapacity);
+		if (null != resultedlist) {
+			createdSlotCount = resultedlist.size();
 		}
 		return createdSlotCount;
 	}
@@ -38,23 +36,23 @@ public class WareHouseServiceImpl implements WareHouseService{
 	@Override
 	@Transactional
 	public String storeProduct(Product product) {
-		Integer slotStatus=0;
-		String responseMessage=null;
-		
-		Rack firstAvailableRack=rackRepository.getRacksByStatus(slotStatus);
-		if(null!=firstAvailableRack) {
+		Integer slotStatus = 0;
+		String responseMessage = null;
+
+		Rack firstAvailableRack = rackRepository.getRacksByStatus(slotStatus);
+		if (null != firstAvailableRack) {
 			product.setRack(firstAvailableRack);
-			Product resultedProduct=productRepository.save(product);
-			slotStatus=1;
-			if(null!=resultedProduct) {
-				responseMessage= "Allocated slot number: "+firstAvailableRack.getSlotNo();
-			}else {
-				responseMessage="something went wrong";
+			Product resultedProduct = productRepository.save(product);
+			slotStatus = 1;
+			if (null != resultedProduct) {
+				responseMessage = "Allocated slot number: " + firstAvailableRack.getSlotNo();
+			} else {
+				responseMessage = "something went wrong";
 			}
 			firstAvailableRack.setSlotStatus(slotStatus);
 			rackRepository.save(firstAvailableRack);
-		}else {
-			responseMessage= "Warehouse is full";
+		} else {
+			responseMessage = "Warehouse is full or No slots Available";
 		}
 		return responseMessage;
 	}
@@ -62,18 +60,18 @@ public class WareHouseServiceImpl implements WareHouseService{
 	@Override
 	@Transactional
 	public String sellProduct(Integer slotNo) {
-		String respnseMessage=null;
-		Rack rack=rackRepository.getBySlotNo(slotNo);
-		if(null!=rack) {
+		String respnseMessage = null;
+		Rack rack = rackRepository.getBySlotNo(slotNo);
+		if (null != rack) {
 			productRepository.deleteByRack(rack);
 			rack.setSlotStatus(0);
-			Rack updatedRack=rackRepository.save(rack);
-			if(null!=updatedRack)
-				respnseMessage="Slot number "+slotNo+" is free";
+			Rack updatedRack = rackRepository.save(rack);
+			if (null != updatedRack)
+				respnseMessage = "Slot number " + slotNo + " is free";
 			else
-				respnseMessage="something went wrong";
-		}else {
-			respnseMessage="not found";
+				respnseMessage = "something went wrong";
+		} else {
+			respnseMessage = "not found";
 		}
 		return respnseMessage;
 	}
@@ -81,27 +79,27 @@ public class WareHouseServiceImpl implements WareHouseService{
 	@Override
 	@Transactional
 	public List<WareHouse> getWareHouseStatus() {
-		List<WareHouse> warehouseList=new ArrayList<>();
-		List<Product> products= productRepository.findAll();
-		if(!products.isEmpty()) {
-			for(Product product:products) {
-				WareHouse 	wareHouse=new WareHouse();
+		List<WareHouse> warehouseList = new ArrayList<>();
+		List<Product> products = productRepository.findAll();
+		if (!products.isEmpty()) {
+			for (Product product : products) {
+				WareHouse wareHouse = new WareHouse();
 				wareHouse.setSlotNo(product.getRack().getSlotNo());
 				wareHouse.setProductCode(product.getProductCode());
 				wareHouse.setColor(product.getProductColor());
 				warehouseList.add(wareHouse);
 			}
 		}
-	return	warehouseList;
+		return warehouseList;
 	}
 
 	@Override
 	@Transactional
 	public List<Long> getProductCodesByColor(String productColor) {
-		List<Long> productCodes=new ArrayList<>();
-		List<Product> products= productRepository.getByProductColor(productColor);
-		if(!products.isEmpty()) {
-			for(Product product:products) {
+		List<Long> productCodes = new ArrayList<>();
+		List<Product> products = productRepository.getByProductColor(productColor);
+		if (!products.isEmpty()) {
+			for (Product product : products) {
 				productCodes.add(product.getProductCode());
 			}
 		}
@@ -111,10 +109,10 @@ public class WareHouseServiceImpl implements WareHouseService{
 	@Override
 	@Transactional
 	public List<Integer> getSlotNumbersByColor(String productColor) {
-		List<Integer> productColors=new ArrayList<>();
-		List<Product> products= productRepository.getByProductColor(productColor);
-		if(!products.isEmpty()) {
-			for(Product product:products) {
+		List<Integer> productColors = new ArrayList<>();
+		List<Product> products = productRepository.getByProductColor(productColor);
+		if (!products.isEmpty()) {
+			for (Product product : products) {
 				productColors.add(product.getRack().getSlotNo());
 			}
 		}
@@ -124,12 +122,12 @@ public class WareHouseServiceImpl implements WareHouseService{
 	@Override
 	@Transactional
 	public Integer getSlotNumberByProductCode(Long productCode) {
-		Integer resultedProductCode=null;
-		Product product=productRepository.getByProductCode(productCode);
-		if(null!=product) {
-			resultedProductCode=product.getRack().getSlotNo();
+		Integer resultedProductCode = null;
+		Product product = productRepository.getByProductCode(productCode);
+		if (null != product) {
+			resultedProductCode = product.getRack().getSlotNo();
 		}
 		return resultedProductCode;
 	}
-	
+
 }
