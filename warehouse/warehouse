@@ -1,0 +1,91 @@
+#!/bin/bash
+######################################################
+#Build the wareHouse
+#####################################################
+mvn clean package
+echo "Warehouse Project has been built successfully"
+cp target/warehouse-0.0.1-SNAPSHOT.jar .
+######################################################
+#start the wareHouse application
+#####################################################
+nohup java -jar warehouse-0.0.1-SNAPSHOT.jar &
+####################################################
+sleep 5s
+menu(){
+printf "\nInput:\n"
+read opt
+}
+
+clear;
+menu
+while [ opt != '' ]
+    do
+    if [[ $opt = "" ]]; then 
+            exit;
+    else
+        case $opt in
+       warehouse*) 
+        optarray=($opt)
+        dataString="wareHouseCapacity="
+		dataString="$dataString ${optarray[1]}"
+		printf "Output:\n"
+		curl --data "$dataString" --request POST http://localhost:8001/warehouse
+       menu;
+               ;;
+
+       store*) 
+          optarray=($opt)
+		  dataString="{\"productCode\":\"${optarray[1]}\",\"productColor\":\"${optarray[2]}\"}"
+		  printf "Output:\n"
+		  curl  --header "Content-Type: application/json" --request POST --data ''"$dataString"'' http://localhost:8001/store
+	   menu;
+            ;;
+			
+       status*) 
+		 printf "Output:\n"
+         curl --request GET http://localhost:8001/status
+	   menu;
+                  ;;
+				  
+       product_codes_for_products_with_colour*)
+		 optarray=($opt)
+         dataString="productColor="
+		 dataString="$dataString${optarray[1]}"
+		 printf "Output:\n"
+         curl --request GET http://localhost:8001/product_codes_for_products_with_colour?"$dataString"
+	   menu;
+            ;;
+			
+ 	   slot_number_for_product_code*) 
+		 optarray=($opt)
+         dataString="productCode="
+		 dataString="$dataString${optarray[1]}"
+		 printf "Output:\n"
+         curl --request GET http://localhost:8001/slot_number_for_product_code?"$dataString"
+	   menu;
+            ;;
+			
+	   slot_numbers_for_products_with_colour*) 
+         optarray=($opt)
+         dataString="productColor="
+		 dataString="$dataString${optarray[1]}"
+		 printf "Output:\n"
+         curl --data "$dataString" --request GET http://localhost:8001/slot_numbers_for_products_with_colour?"$dataString"
+	   menu;
+            ;;
+			
+	   sell*)
+	    optarray=($opt)
+	    dataString="slotNo="
+	    dataString="$dataString ${optarray[1]}"
+		printf "Output:\n"
+	    curl --data "$dataString" --request DELETE http://localhost:8001/sell
+	   menu;
+            ;;
+			
+       x)exit;
+        ;;
+       esac
+fi
+done
+
