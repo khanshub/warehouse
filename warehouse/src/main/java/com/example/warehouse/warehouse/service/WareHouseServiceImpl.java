@@ -71,7 +71,7 @@ public class WareHouseServiceImpl implements WareHouseService {
 			else
 				respnseMessage = "something went wrong";
 		} else {
-			respnseMessage = "not found";
+			respnseMessage = "Not found or Warehouse is Empty";
 		}
 		return respnseMessage;
 	}

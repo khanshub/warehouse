@@ -26,16 +26,29 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING )
 public class WarehouseApplicationTests {
-
+	
+	/*
+	 * mocks the complete mvc flow to execute the testcase 
+	 */
 	private MockMvc mockMvc;
+	
+	/*
+	 * creates application context 
+	 */
 	@Autowired
 	private WebApplicationContext webApplicationContext;
 	
+	/*
+	 * building mockmvc
+	 */
 	@Before
 	public void setUp() throws Exception {
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 	}
 
+	/*
+	 * testing the warehouse creation service
+	 */
 	@Test
 	public void AcreateWareHouse() throws Exception {
 		int capacity = 2;
@@ -48,28 +61,43 @@ public class WarehouseApplicationTests {
 		assertEquals("Created a warehouse with " + capacity + " slots", content);
 	}
 
+	/*
+	 * tests store product service 
+	 * tests whether products getting stored to the first available slot only
+	 * tests if warehouse if full
+	 */
 	@Test
 	public void BstoreProduct() throws Exception {
 		String uri = "/store";
-		int slotNo=1;
+		int slotNo=0;
 		Long productCode = 72527273070l;
-		Product product = new Product();
-		product.setProductCode(productCode);
-		product.setProductColor("green");
+		for(int i=1;i<=3;i++){
+			slotNo=i;
+			Product product = new Product();
+			product.setProductCode(productCode++);
+			product.setProductColor("green");
 
-		ObjectMapper objectMapper = new ObjectMapper();
-		String productJson = objectMapper.writeValueAsString(product);
-
-		MvcResult mvcResult = mockMvc.perform(
-				MockMvcRequestBuilders.post(uri).contentType(MediaType.APPLICATION_JSON_VALUE).content(productJson))
-				.andReturn();
-
-		int status = mvcResult.getResponse().getStatus();
-		assertEquals(200, status);
-		String content = mvcResult.getResponse().getContentAsString();
-		assertEquals("Allocated slot number: " + slotNo, content);
+			ObjectMapper objectMapper = new ObjectMapper();
+			String productJson = objectMapper.writeValueAsString(product);
+			
+			MvcResult mvcResult = mockMvc.perform(
+					MockMvcRequestBuilders.post(uri).contentType(MediaType.APPLICATION_JSON_VALUE).content(productJson))
+					.andReturn();
+			int status = mvcResult.getResponse().getStatus();
+			assertEquals(200, status);
+			String content = mvcResult.getResponse().getContentAsString();
+			if(i<3){
+				assertEquals("Allocated slot number: " + slotNo, content);
+				
+			}else{
+				assertEquals("Warehouse is full or No slots Available", content);
+			}
+		}
 	}
 
+	/*
+	 * tests get status service
+	 */
 	@Test
 	public void CgetWareHouseStatus() throws Exception {
 		String uri = "/status";
@@ -84,6 +112,9 @@ public class WarehouseApplicationTests {
 		assertTrue(productlist.length > 0);
 	}
 
+	/*
+	 * tests get product codes by color service
+	 */
 	@Test
 	public void DgetProductCodes() throws Exception {
 		String productColor = "green";
@@ -98,7 +129,10 @@ public class WarehouseApplicationTests {
 		Long[] productCodeslist = objectMapper.readValue(content, Long[].class);
 		assertTrue(productCodeslist.length > 0);
 	}
-
+	
+	/*
+	 * tests get slot numbers by color service
+	 */
 	@Test
 	public void EgetSlotNumbers() throws Exception {
 		String productColor = "green";
@@ -114,6 +148,9 @@ public class WarehouseApplicationTests {
 		assertTrue(slotNumbersList.length > 0);
 	}
 
+	/*
+	 * tests get slot number by productCode service
+	 */
 	@Test
 	public void FgetSlotNumber() throws Exception {
 		Long productCode = 72527273070l;
@@ -127,15 +164,28 @@ public class WarehouseApplicationTests {
 		assertEquals(expectedSlotNo, content);
 	}
 
+	/*
+	 * tests sell product service 
+	 * tests whether products getting stored to the first available slot only
+	 * tests if requested product is not found or warehouse if empty
+	 */
 	@Test
 	public void GsellProduct() throws Exception {
-		int slotNo = 1;
-		String uri = "/sell?slotNo=" + slotNo;
-		MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.delete(uri)).andReturn();
-		int status = mvcResult.getResponse().getStatus();
-		assertEquals(200, status);
-		String content = mvcResult.getResponse().getContentAsString();
-		assertEquals("Slot number " + slotNo + " is free", content);
+			int slotNo = 0;
+			for(int i=1;i<=3;i++){
+				slotNo=i;
+				String uri = "/sell?slotNo=" + slotNo;
+				MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.delete(uri)).andReturn();
+				int status = mvcResult.getResponse().getStatus();
+				assertEquals(200, status);
+				String content = mvcResult.getResponse().getContentAsString();
+				if(i<3){
+					assertEquals("Slot number " + slotNo + " is free", content);
+				}else{
+					assertEquals("Not found or Warehouse is Empty", content);
+					
+				}
+		}
 	}
 
 	@Test

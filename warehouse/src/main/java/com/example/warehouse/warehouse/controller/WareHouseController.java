@@ -20,7 +20,9 @@ public class WareHouseController {
 	@Autowired
 	private WareHouseService wareHouseService;
 	
-
+	/*
+	 * creates a warehouse with capacity passed as a query parameter
+	 */
 	@PostMapping("/warehouse")
 	public String createWareHouse(@RequestParam("wareHouseCapacity") Integer wareHouseCapacity) {
 
@@ -29,7 +31,9 @@ public class WareHouseController {
 
 	}
 
-
+	/*
+	 * store a product to warehouse and returns the slotno where the product has been stored
+	 */
 	@PostMapping("/store")
 	public String storeProduct(@RequestBody Product product) {
 		String responseMessage = wareHouseService.storeProduct(product);
@@ -37,32 +41,42 @@ public class WareHouseController {
 
 	}
 
-
+	/*
+	 * sells a product from warehouse and sets the slot free
+	 */
 	@DeleteMapping("/sell")
 	public String sellProduct(@RequestParam("slotNo") Integer slotNo) {
 		String ResponseMessage = wareHouseService.sellProduct(slotNo);
 		return ResponseMessage;
 	}
 
-
+	/*
+	 * gets the status of warehouse which contains the product details with respective allocated slotno
+	 */
 	@GetMapping("/status")
 	public List<WareHouse> getWareHouseStatus() {
 		return wareHouseService.getWareHouseStatus();
 	}
 
-
+	/*
+	 * get product codes for products with  a perticuer colour
+	 */
 	@GetMapping("/product_codes_for_products_with_colour")
 	public List<Long> getProductCodes(@RequestParam("productColor") String productColor) {
 		return wareHouseService.getProductCodesByColor(productColor);
 	}
 
-
+	/*
+	 * get allocated slot numbers for products with  a perticuer colour
+	 */
 	@GetMapping("/slot_numbers_for_products_with_colour")
 	public List<Integer> getSlotNumbers(@RequestParam("productColor") String productColor) {
 		return wareHouseService.getSlotNumbersByColor(productColor);
 	}
 	
-
+	/*
+	 * get allocated slot number for  a product
+	 */
 	@GetMapping("/slot_number_for_product_code")
 	public String getSlotNumber(@RequestParam("productCode") Long productCode) {
 		Integer slotnumber = wareHouseService.getSlotNumberByProductCode(productCode);
