@@ -28,38 +28,46 @@ get the results
    
    you can use the commands (see commands below with input and output formats)like:
    
-           Input:
+Input:    
 warehouse 6
 Output:
 Created a warehouse with 6 slots
+
 Input:
 store 72527273070 White
 Output:
 Allocated slot number: 1
+
 Input:
 store 72527273071 Green
 Output:
 Allocated slot number: 2
+
 Input:
 store 72537113170 Purple
 Output:
 Allocated slot number: 3
+
 Input:
 store 72537113171 Black
 Output:
 Allocated slot number: 4
+
 Input:
 store 72537113172 Black
 Output:
 Allocated slot number: 5
+
 Input:
 store 72537113173 Green
 Output:
 Allocated slot number: 6
+
 Input:
 sell 4
 Output:
 Slot number 4 is free
+
 Input:
 status
 Output (tab delimited output):
@@ -69,26 +77,32 @@ Slot No. Product Code Colour
 3 72537113170 Purple
 5 72537113172 Black
 6 72537113173 Green
+
 Input:
 store 82537113174 Purple
 Output:
 Allocated slot number: 4
+
 Input:
 store 82527273075 White
 Output:
 Warehouse is full
+
 Input:
 product_codes_for_products_with_colour White
 Output:
 72527273070, 82527273075
+
 Input:
 slot_numbers_for_products_with_colour Green
 Output:
 2, 6
+
 Input:
 slot_number_for_product_code 82537113174
 Output:
 4
+
 Input:
 slot_number_for_product_code 82532222174
 Output:
