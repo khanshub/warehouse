@@ -28,7 +28,7 @@ get the results
    
    you can use the commands (see commands below with input and output formats)like:
    
-Input:
+           Input:
 warehouse 6
 Output:
 Created a warehouse with 6 slots
@@ -93,6 +93,8 @@ Input:
 slot_number_for_product_code 82532222174
 Output:
 Not found
+   
+
    
  running on windows:
  
